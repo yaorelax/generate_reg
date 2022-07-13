@@ -1,7 +1,7 @@
 #include <iostream>
 #include <windows.h>
 #include <string>
-
+#include <algorithm>
 #include <fstream>
 
 using namespace std;
@@ -16,6 +16,12 @@ int main() {
     string strPath_without_file = strPath.substr(0, pos);
     cout << strPath_without_file << endl;
 
+    string::size_type idx=0;
+    while((idx=strPath_without_file.find_first_of('\\',idx)) != string::npos)
+    {
+        strPath_without_file.insert(idx,"\\");//插入
+        idx=idx + 2;
+    }
 
     ofstream ofs;
     ofs.open("cmd.reg",ios::trunc);
@@ -35,7 +41,7 @@ int main() {
            "@=\"\"\n"
            "\n"
            "[HKEY_CLASSES_ROOT\\telnet120\\shell\\open\\command]\n"
-           "@=\"cmd /c && telnet 192.168.1.10\"\n"
+           "@=\"cmd /c c: && telnet 192.168.1.10\"\n"
            "\n"
            "\n"
            "[HKEY_CLASSES_ROOT\\bat120]\n"
@@ -52,9 +58,9 @@ int main() {
            "@=\"\"\n"
            "\n"
            "[HKEY_CLASSES_ROOT\\bat120\\shell\\open\\command]\n"
-           "@=\"cmd /c && cd /d "
+           "@=\"cmd /c c: && cd /d "
            << strPath_without_file <<
-           "\\autostart && start_sias.bat stop && start_sias.bat run\""
+           "\\\\autostart && start_sias.bat stop && start_sias.bat run\""
            << endl;
 
     ofs.close();
